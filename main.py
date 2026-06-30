@@ -1,11 +1,23 @@
 import getnews
+import analysis
 import output
 import database
+import sqlite3
 
+# 1. Initialize DB
 database.create_database()
-getnews.get_articles("prediction market", count=10)
-output.output_results()
 
+# 2. Fetch and store articles, getting their unique database IDs
+article_ids = getnews.get_articles("prediction market", count=10)
+
+# 3. Analyze each freshly pulled article
+conn = sqlite3.connect('news_analysis.db')
+for aid in article_ids:
+    analysis.get_analysis_results(conn, aid)
+conn.close()
+
+# 4. Export results
+output.output_results()
 
 
 
